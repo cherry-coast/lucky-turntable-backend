@@ -1,0 +1,49 @@
+server:
+  port: 8787
+  ssl:
+    key-store: classpath:cherry-coast.com.jks
+    key-store-password: a7ph9ln7a2u
+    key-store-type: JKS
+
+spring:
+  application:
+    name: cherry-lucky
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  datasource:
+    url: jdbc:mysql://124.221.143.138:3306/cherry-lucky
+    username: root
+    password: root1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: 124.221.143.138
+    port: 6379
+    password: 123456
+    database: 10
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*Mapper.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    banner: off
+    enable-sql-runner: true
+    db-config:
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+cherry:
+  swagger:
+    base-package: com.cherry.lucky.controller
+    name: cherry
+    url: /web
+    email: 2814804671@qq.com
+    title: cherry-lucky
+    description: 抽奖
+    version: 1.0.1
+    terms-of-service-url: 127.0.0.1
+
+logging:
+  file:
+    path: /data/app/cherry-lucky/logs

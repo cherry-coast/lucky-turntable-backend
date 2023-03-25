@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cherry.lucky.mapper.WinHistoryMapper">
+  <resultMap id="BaseResultMap" type="com.cherry.lucky.entity.WinHistory">
+    <!--@mbg.generated-->
+    <!--@Table lucky_win_history-->
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="OPEN_ID" jdbcType="VARCHAR" property="openId" />
+    <result column="PRIZE_NAME" jdbcType="VARCHAR" property="prizeName" />
+    <result column="USER_MAME" jdbcType="VARCHAR" property="userMame" />
+    <result column="WINNING_DATE" jdbcType="TIMESTAMP" property="winningDate" />
+    <result column="INSERT_DATA" jdbcType="TIMESTAMP" property="insertData" />
+    <result column="UPDATE_DATA" jdbcType="TIMESTAMP" property="updateData" />
+    <result column="DEL" jdbcType="BOOLEAN" property="del" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    ID, OPEN_ID, PRIZE_NAME, USER_MAME, WINNING_DATE, INSERT_DATA, UPDATE_DATA, DEL
+  </sql>
+</mapper>
