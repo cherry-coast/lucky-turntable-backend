@@ -7,11 +7,14 @@ import com.cherry.lucky.common.auth.UserInfo;
 import com.cherry.lucky.common.exception.CherryException;
 import com.cherry.lucky.constant.ErrorCodeConstants;
 import com.cherry.lucky.constant.StringConstant;
+import com.cherry.lucky.domain.CherryResponseEntity;
 import com.cherry.lucky.domain.InterfaceLog;
 import com.cherry.lucky.model.dto.RedisUserInfo;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -91,6 +94,13 @@ public class InterfaceLogAspect {
         String requestUrl = request.getRequestURL().toString();
         // 用户信息
         String token = request.getHeader("token");
+        if(StringUtils.isEmpty(token)) {
+            if(result instanceof CherryResponseEntity)  {
+                token = ((CherryResponseEntity<String>) result).getData();
+            } else {
+                token = "";
+            }
+        }
         RedisUserInfo user = userInfo.getUserInfoByRedis(token);
         InterfaceLog webLog = InterfaceLog
                 .builder()

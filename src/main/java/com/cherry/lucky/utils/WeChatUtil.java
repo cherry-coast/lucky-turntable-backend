@@ -19,6 +19,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
+import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -65,28 +66,14 @@ public class WeChatUtil {
             InvalidParameterSpecException, InvalidAlgorithmParameterException, InvalidKeyException,
             IllegalBlockSizeException, BadPaddingException, UnsupportedEncodingException, JsonProcessingException
     {
-        byte[] dataByte = Base64.decode(encryptedData);
-        byte[] keyByte = Base64.decode(sessionKey);
-        byte[] ivByte = Base64.decode(iv);
-
-        // If the key is less than 16 bits, it will be supplemented.
-        int base = 16;
-        if (keyByte.length % base != 0) {
-            int groups = keyByte.length / base + 1;
-            byte[] temp = new byte[groups * base];
-            Arrays.fill(temp, (byte) 0);
-            System.arraycopy(keyByte, 0, temp, 0, keyByte.length);
-            keyByte = temp;
-        }
-        // init
-        Security.addProvider(new BouncyCastleProvider());
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS7Padding", "BC");
-        SecretKeySpec spec = new SecretKeySpec(keyByte, "AES");
-        AlgorithmParameters parameters = AlgorithmParameters.getInstance("AES");
-        parameters.init(new IvParameterSpec(ivByte));
-        // init
-        cipher.init(Cipher.DECRYPT_MODE, spec, parameters);
-        byte[] resultByte = cipher.doFinal(dataByte);
+        byte[] encData = Base64.decode(encryptedData);
+        byte[] vi = Base64.decode(iv);
+        byte[] key = Base64.decode(sessionKey);
+        AlgorithmParameterSpec ivSpec = new IvParameterSpec(vi);
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        SecretKeySpec keySpec = new SecretKeySpec(key, "AES");
+        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+        byte[] resultByte = cipher.doFinal(encData);
         if (null != resultByte && resultByte.length > 0) {
             String result = new String(resultByte, StandardCharsets.UTF_8);
             return new ObjectMapper().disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES).readValue(result, new TypeReference<>() {

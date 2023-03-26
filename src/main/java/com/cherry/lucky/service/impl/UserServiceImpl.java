@@ -114,7 +114,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 InvalidParameterSpecException e
         ) {
             log.info("login error msg : {}", e.toString());
-            return CherryResponseEntity.success();
+            return CherryResponseEntity.fail();
         }
     }
 }

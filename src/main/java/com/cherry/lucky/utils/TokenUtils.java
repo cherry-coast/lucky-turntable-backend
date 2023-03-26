@@ -34,7 +34,6 @@ public class TokenUtils {
                 .setIssuedAt(new Date())
                 .signWith(SignatureAlgorithm.HS256, KEY)
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000 * 2));
-        System.out.println(jwtBuilder.compact());
         return jwtBuilder.compact();
     }
 
