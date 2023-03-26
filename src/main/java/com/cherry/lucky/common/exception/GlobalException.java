@@ -1,6 +1,11 @@
 package com.cherry.lucky.common.exception;
 
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.util.URLUtil;
+import com.cherry.lucky.constant.ErrorCodeConstants;
 import com.cherry.lucky.domain.CherryResponseEntity;
+import com.cherry.lucky.domain.InterfaceLog;
+import com.cherry.lucky.utils.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -8,6 +13,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author : ganxiongwen
@@ -24,6 +33,7 @@ public class GlobalException {
     @ExceptionHandler(value = CherryException.class)
     public CherryResponseEntity<String> handleCherryException(CherryException e) {
         log.error("module error !!! error message: {}", e.getMessage());
+        generateInterfaceLog(e);
         return CherryResponseEntity.fail(e.getMessage());
     }
 
@@ -54,5 +64,48 @@ public class GlobalException {
         }
         log.error(message);
         return CherryResponseEntity.fail(message);
+    }
+
+    private void generateInterfaceLog(Exception e) {
+        // 获取请求的上下文
+        ServletRequestAttributes requestAttributes =
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if(requestAttributes == null) {
+            throw new CherryException(ErrorCodeConstants.GET_REQUEST_ERROR, "获取请求的上下文为空 !!! ");
+        }
+
+        HttpServletRequest request = requestAttributes.getRequest();
+        // 获取请求的url 地址
+        String requestUrl = request.getRequestURL().toString();
+        // 用户信息
+        String token = request.getHeader("token");
+        String username = TokenUtils.parseTokenToUserName(token);
+
+        InterfaceLog webLog = InterfaceLog
+                .builder()
+                .username(username)
+                .basePath(StrUtil.removeSuffix(requestUrl, URLUtil.url(requestUrl).getPath()))
+                .description("no desc")
+                .ip(request.getRemoteAddr())
+                .parameter(null)
+                .method("")
+                .result("request error error message : " + getError(e))
+                .recodeTime(System.currentTimeMillis())
+                .spendTime(0L)
+                .uri(request.getRequestURI())
+                .url(request.getRequestURL().toString())
+                .build();
+
+        System.out.println(webLog);
+    }
+
+    private String getError(Exception e) {
+        StringBuilder errorMsg = new StringBuilder();
+        if(e != null && e.getStackTrace() != null) {
+            for (StackTraceElement stackTraceElement : e.getStackTrace()) {
+                errorMsg.append(stackTraceElement.toString()).append("\n");
+            }
+        }
+        return errorMsg.toString();
     }
 }

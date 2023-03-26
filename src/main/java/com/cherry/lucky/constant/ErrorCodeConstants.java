@@ -36,4 +36,14 @@ public class ErrorCodeConstants {
      */
     public static final int TOKEN_IS_ERROR = 50018;
 
+    /**
+     * token claims 为空
+     */
+    public static final int CLAIMS_IS_NULL_ERROR = 50018;
+
+    /**
+     * 获取请求对象失败
+     */
+    public static final int GET_REQUEST_ERROR = 50019;
+
 }

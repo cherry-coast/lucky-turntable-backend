@@ -57,7 +57,7 @@ public class UserInfo {
             if (StringUtils.isBlank(token)) {
                 throw new CherryException(ErrorCodeConstants.TOKEN_IS_NOT_EXISTENT, "token 不存在 !!!");
             } else {
-                String openId = TokenUtils.parseToken(token);
+                String openId = TokenUtils.parseTokenToOpenId(token);
                 if (StringUtils.isBlank(openId)) {
                     throw new CherryException(ErrorCodeConstants.TOKEN_IS_ERROR, "token 有误 !!!");
                 }
@@ -65,7 +65,7 @@ public class UserInfo {
                 if(user == null) {
                     throw new CherryException(ErrorCodeConstants.TOKEN_IS_ERROR, "token 有误 !!!");
                 }
-                // token 续期
+                // token 续期，不生成新token 只对当前token延时，对于使用旧token重复提交已做拦截处理
                 String newUserInfo = objectMapper.writeValueAsString(
                         RedisUserInfo.builder()
                                 .username(user.getName())

@@ -3,10 +3,12 @@ package com.cherry.lucky.common.aop;
 import cn.hutool.core.date.StopWatch;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.URLUtil;
+import com.cherry.lucky.common.auth.UserInfo;
 import com.cherry.lucky.common.exception.CherryException;
 import com.cherry.lucky.constant.ErrorCodeConstants;
 import com.cherry.lucky.constant.StringConstant;
 import com.cherry.lucky.domain.InterfaceLog;
+import com.cherry.lucky.model.dto.RedisUserInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -44,9 +46,16 @@ public class InterfaceLogAspect {
 
     private ObjectMapper objectMapper;
 
+    private UserInfo userInfo;
+
     @Autowired
     public void setObjectMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
+    }
+
+    @Autowired
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
     }
 
     @Pointcut("execution( * com.cherry.lucky.controller.*.*(..))")
@@ -68,7 +77,7 @@ public class InterfaceLogAspect {
         ServletRequestAttributes requestAttributes =
             (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
         if(requestAttributes == null) {
-            throw new CherryException(ErrorCodeConstants.INTERFACE_POINT_CUT_ERROR, String.format("日志切面获取请求的上下文为空: %s", requestAttributes));
+            throw new CherryException(ErrorCodeConstants.GET_REQUEST_ERROR, "日志切面获取请求的上下文为空 !!! ");
         }
         HttpServletRequest request = requestAttributes.getRequest();
         // 获取方法
@@ -80,8 +89,12 @@ public class InterfaceLogAspect {
         String className = proceedingJoinPoint.getTarget().getClass().getName();
         // 获取请求的url 地址
         String requestUrl = request.getRequestURL().toString();
+        // 用户信息
+        String token = request.getHeader("token");
+        RedisUserInfo user = userInfo.getUserInfoByRedis(token);
         InterfaceLog webLog = InterfaceLog
                 .builder()
+                .username(user.getUsername())
                 .basePath(StrUtil.removeSuffix(requestUrl, URLUtil.url(requestUrl).getPath()))
                 .description(annotation == null ? "no desc" : annotation.value())
                 .ip(request.getRemoteAddr())

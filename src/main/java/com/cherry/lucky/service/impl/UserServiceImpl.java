@@ -98,7 +98,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             redisTemplate.opsForValue().set(
                     token,
                     userInfo,
-                    24 * 2, TimeUnit.HOURS
+                    24, TimeUnit.HOURS
             );
             return CherryResponseEntity.success(token);
         } catch (

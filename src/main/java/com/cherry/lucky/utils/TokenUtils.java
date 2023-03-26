@@ -1,13 +1,16 @@
 package com.cherry.lucky.utils;
 
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.cherry.lucky.common.exception.CherryException;
+import com.cherry.lucky.constant.ErrorCodeConstants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author cherry
@@ -16,6 +19,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
  * @Description
  * @createTime 2023年03月22日 16:02:00
  */
+@Slf4j
 public class TokenUtils {
 
     private final static String KEY = "cherry-lucky";
@@ -34,19 +38,30 @@ public class TokenUtils {
         return jwtBuilder.compact();
     }
 
-    public static String parseToken(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(KEY)
-                .parseClaimsJws(token)
-                .getBody();
-        System.out.println("用户id:" + claims.getId());
-        System.out.println("用户名:" + claims.getSubject());
-        System.out.println("用户时间:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").
-                format(claims.getIssuedAt()));
-        System.out.println("过期时间:" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").
-                format(claims.getExpiration()));
+    public static String parseTokenToOpenId(String token) {
+        Claims claims = getClaims(token);
+        if(claims == null) {
+            throw new CherryException(ErrorCodeConstants.CLAIMS_IS_NULL_ERROR, "parse token error claims is null !!!");
+        }
         return claims.getId();
     }
 
+    public static String parseTokenToUserName(String token) {
+        Claims claims = getClaims(token);
+        if(claims == null) {
+            throw new CherryException(ErrorCodeConstants.CLAIMS_IS_NULL_ERROR, "parse token error claims is null !!!");
+        }
+        return claims.getSubject();
+    }
 
+    private static Claims getClaims(String token) {
+        if (StringUtils.isEmpty(token)) {
+            log.info("get claims error token is null !!!! ");
+            return null;
+        }
+        return Jwts.parser()
+                .setSigningKey(KEY)
+                .parseClaimsJws(token)
+                .getBody();
+    }
 }
