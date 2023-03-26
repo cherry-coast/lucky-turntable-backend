@@ -62,7 +62,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         try {
             SessionKeyOpenIdDTO sessionKeyOrOpenId = WeChatUtil.getSessionKeyOrOpenId(weChatUserInfoWebRequestDTO.getCode());
 
-            JSONObject rawDataJson = JSONUtil.parseObj(weChatUserInfoWebRequestDTO.getRawData());
+//            JSONObject rawDataJson = JSONUtil.parseObj(weChatUserInfoWebRequestDTO.getRawData());
 
             WeChatUserInfoDTO weChatUserInfoDTO = WeChatUtil.getUserInfo(
                     weChatUserInfoWebRequestDTO.getEncryptedData(),
