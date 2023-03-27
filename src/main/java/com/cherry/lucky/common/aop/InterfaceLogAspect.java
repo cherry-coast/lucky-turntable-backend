@@ -10,7 +10,7 @@ import com.cherry.lucky.constant.StringConstant;
 import com.cherry.lucky.domain.CherryResponseEntity;
 import com.cherry.lucky.domain.InterfaceLog;
 import com.cherry.lucky.model.dto.RedisUserInfo;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.cherry.lucky.service.InterfaceLogService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -47,18 +47,19 @@ import java.util.Objects;
 @Slf4j
 public class InterfaceLogAspect {
 
-    private ObjectMapper objectMapper;
 
     private UserInfo userInfo;
 
-    @Autowired
-    public void setObjectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
+    private InterfaceLogService interfaceLogServiceImpl;
 
     @Autowired
     public void setUserInfo(UserInfo userInfo) {
         this.userInfo = userInfo;
+    }
+
+    @Autowired
+    public void setInterfaceLogServiceImpl(InterfaceLogService interfaceLogServiceImpl) {
+        this.interfaceLogServiceImpl = interfaceLogServiceImpl;
     }
 
     @Pointcut("execution( * com.cherry.lucky.controller.*.*(..))")
@@ -116,7 +117,7 @@ public class InterfaceLogAspect {
                 .uri(request.getRequestURI())
                 .url(request.getRequestURL().toString())
                 .build();
-        log.info(objectMapper.writeValueAsString(webLog));
+        interfaceLogServiceImpl.saveLog(webLog);
         return result;
     }
 

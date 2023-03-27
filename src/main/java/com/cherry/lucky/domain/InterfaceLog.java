@@ -11,10 +11,11 @@ import lombok.*;
  * Copyright (c) 2022,All Rights Reserved.
  */
 @Data
+@Builder
+@ToString
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class InterfaceLog {
 
     /**

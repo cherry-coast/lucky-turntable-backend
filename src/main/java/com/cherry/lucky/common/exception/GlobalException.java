@@ -5,8 +5,11 @@ import cn.hutool.core.util.URLUtil;
 import com.cherry.lucky.constant.ErrorCodeConstants;
 import com.cherry.lucky.domain.CherryResponseEntity;
 import com.cherry.lucky.domain.InterfaceLog;
+import com.cherry.lucky.service.InterfaceLogService;
 import com.cherry.lucky.utils.TokenUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -30,6 +33,13 @@ import javax.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class GlobalException {
 
+    private InterfaceLogService interfaceLogServiceImpl;
+
+    @Autowired
+    public void setInterfaceLogServiceImpl(InterfaceLogService interfaceLogServiceImpl) {
+        this.interfaceLogServiceImpl = interfaceLogServiceImpl;
+    }
+
     @ExceptionHandler(value = CherryException.class)
     public CherryResponseEntity<String> handleCherryException(CherryException e) {
         log.error("module error !!! error message: {}", e.getMessage());
@@ -49,6 +59,7 @@ public class GlobalException {
 
     @ExceptionHandler(value = Exception.class)
     public CherryResponseEntity<String> handleValidException(Exception e) {
+        generateInterfaceLog(e);
         log.error(e.toString());
         return CherryResponseEntity.fail(e.getMessage());
     }
@@ -62,6 +73,7 @@ public class GlobalException {
                 message = fieldError.getField() + fieldError.getDefaultMessage();
             }
         }
+        generateInterfaceLog(e);
         log.error(message);
         return CherryResponseEntity.fail(message);
     }
@@ -79,7 +91,10 @@ public class GlobalException {
         String requestUrl = request.getRequestURL().toString();
         // 用户信息
         String token = request.getHeader("token");
-        String username = TokenUtils.parseTokenToUserName(token);
+        String username = "";
+        if(StringUtils.isNotBlank(token)) {
+            username = TokenUtils.parseTokenToUserName(token);
+        }
 
         InterfaceLog webLog = InterfaceLog
                 .builder()
@@ -95,8 +110,7 @@ public class GlobalException {
                 .uri(request.getRequestURI())
                 .url(request.getRequestURL().toString())
                 .build();
-
-        System.out.println(webLog);
+        interfaceLogServiceImpl.saveLog(webLog);
     }
 
     private String getError(Exception e) {

@@ -5,6 +5,7 @@ import cn.hutool.core.util.URLUtil;
 import com.cherry.lucky.common.annotate.WxInterfaceAnnotation;
 import com.cherry.lucky.constant.HttpCodeConstants;
 import com.cherry.lucky.domain.InterfaceLog;
+import com.cherry.lucky.service.impl.InterfaceLogServiceImpl;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class LoginInterceptor implements HandlerInterceptor {
+
     /**
      * 目标方法执行之前
      * 登录检查写在这里，如果没有登录，就不执行目标方法
@@ -58,7 +60,8 @@ public class LoginInterceptor implements HandlerInterceptor {
                             .uri(request.getRequestURI())
                             .url(request.getRequestURL().toString())
                             .build();
-                    System.out.println(webLog);
+                    InterfaceLogServiceImpl interfaceLogService = new InterfaceLogServiceImpl();
+                    interfaceLogService.saveLogAsJdbc(webLog);
                     response.setStatus(HttpCodeConstants.UN_AUTH);
                     return false;
                 }

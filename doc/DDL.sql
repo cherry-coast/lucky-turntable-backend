@@ -50,3 +50,25 @@ CREATE TABLE `lucky_win_history`
 ) ENGINE = INNODB
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
+
+drop table if exists lucky_interface_log;
+CREATE TABLE lucky_interface_log
+(
+    `ID`          INT     NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+    `DESCRIPTION` VARCHAR(255)     DEFAULT '' COMMENT '操作描述',
+    `USERNAME`    VARCHAR(255)     DEFAULT '' COMMENT '操作用户',
+    `SPEND_TIME`  BIGINT           DEFAULT 0 COMMENT '消耗时间',
+    `BASE_PATH`   VARCHAR(255)     DEFAULT '' COMMENT '根路径',
+    `URI`         VARCHAR(255)     DEFAULT '' COMMENT 'URI',
+    `URL`         VARCHAR(255)     DEFAULT '' COMMENT 'URL',
+    `METHOD`      VARCHAR(255)     DEFAULT '' COMMENT '请求类型',
+    `IP`          VARCHAR(255)     DEFAULT '' COMMENT 'IP地址',
+    `PARAMETER`   TEXT COMMENT '请求参数',
+    `RESULT`      TEXT COMMENT '返回结果',
+    `RECORD_TIME` BIGINT           DEFAULT 0 COMMENT '开始时间',
+    `INSERT_DATA` TIMESTAMP        DEFAULT CURRENT_TIMESTAMP COMMENT '插入时间',
+    `UPDATE_DATA` TIMESTAMP        DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `DEL`         BOOLEAN NOT NULL DEFAULT FALSE COMMENT '是否删除,0:否,1:是,默认否',
+    PRIMARY KEY (id)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4 COMMENT ='接口日志表';
