@@ -11,7 +11,6 @@ import com.cherry.lucky.domain.CherryResponseEntity;
 import com.cherry.lucky.domain.InterfaceLog;
 import com.cherry.lucky.model.dto.RedisUserInfo;
 import com.cherry.lucky.service.InterfaceLogService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

@@ -5,10 +5,7 @@ import java.util.Date;
 
 import com.cherry.lucky.common.exception.CherryException;
 import com.cherry.lucky.constant.ErrorCodeConstants;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,7 +36,7 @@ public class TokenUtils {
 
     public static String parseTokenToOpenId(String token) {
         Claims claims = getClaims(token);
-        if(claims == null) {
+        if (claims == null) {
             throw new CherryException(ErrorCodeConstants.CLAIMS_IS_NULL_ERROR, "parse token error claims is null !!!");
         }
         return claims.getId();
@@ -47,7 +44,7 @@ public class TokenUtils {
 
     public static String parseTokenToUserName(String token) {
         Claims claims = getClaims(token);
-        if(claims == null) {
+        if (claims == null) {
             throw new CherryException(ErrorCodeConstants.CLAIMS_IS_NULL_ERROR, "parse token error claims is null !!!");
         }
         return claims.getSubject();
@@ -58,9 +55,25 @@ public class TokenUtils {
             log.info("get claims error token is null !!!! ");
             return null;
         }
-        return Jwts.parser()
-                .setSigningKey(KEY)
-                .parseClaimsJws(token)
-                .getBody();
+
+        Claims claims;
+        try {
+            claims = Jwts.parser()
+                    .setSigningKey(KEY)
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            claims = e.getClaims();
+        }
+        return claims;
+    }
+
+    public static Boolean isTokenExpired(String token) {
+        Claims claims = getClaims(token);
+        if(claims == null) {
+            throw new CherryException(ErrorCodeConstants.CLAIMS_IS_NULL_ERROR, "isTokenExpired error claims is null");
+        }
+        Date expiration = claims.getExpiration();
+        return new Date(System.currentTimeMillis()).after(expiration);
     }
 }

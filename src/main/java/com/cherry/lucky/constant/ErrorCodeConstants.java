@@ -46,4 +46,10 @@ public class ErrorCodeConstants {
      */
     public static final int GET_REQUEST_ERROR = 50019;
 
+
+    /**
+     * 请求过于频繁
+     */
+    public static final int REQUEST_FREQUENTLY = 50020;
+
 }

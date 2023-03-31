@@ -6,6 +6,7 @@ import com.cherry.lucky.common.annotate.WxInterfaceAnnotation;
 import com.cherry.lucky.constant.HttpCodeConstants;
 import com.cherry.lucky.domain.InterfaceLog;
 import com.cherry.lucky.service.impl.InterfaceLogServiceImpl;
+import com.cherry.lucky.utils.TokenUtils;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -45,8 +46,9 @@ public class LoginInterceptor implements HandlerInterceptor {
         String requestUrl = request.getRequestURL().toString();
         if(handler instanceof HandlerMethod handlerMethod) {
             if(handlerMethod.getMethodAnnotation(WxInterfaceAnnotation.class) != null) {
-                if(StringUtils.isEmpty(request.getHeader("token"))) {
-                    ApiOperation annotation = handlerMethod.getMethodAnnotation(ApiOperation.class);
+                String token = request.getHeader("token");
+                ApiOperation annotation = handlerMethod.getMethodAnnotation(ApiOperation.class);
+                if(StringUtils.isEmpty(token)) {
                     InterfaceLog webLog = InterfaceLog
                             .builder()
                             .basePath(StrUtil.removeSuffix(requestUrl, URLUtil.url(requestUrl).getPath()))
@@ -55,6 +57,24 @@ public class LoginInterceptor implements HandlerInterceptor {
                             .parameter(null)
                             .method(handlerMethod.getMethod().getName())
                             .result("token is null !!! ")
+                            .recodeTime(System.currentTimeMillis())
+                            .spendTime(0L)
+                            .uri(request.getRequestURI())
+                            .url(request.getRequestURL().toString())
+                            .build();
+                    InterfaceLogServiceImpl interfaceLogService = new InterfaceLogServiceImpl();
+                    interfaceLogService.saveLogAsJdbc(webLog);
+                    response.setStatus(HttpCodeConstants.UN_AUTH);
+                    return false;
+                } else if (TokenUtils.isTokenExpired(token)) {
+                    InterfaceLog webLog = InterfaceLog
+                            .builder()
+                            .basePath(StrUtil.removeSuffix(requestUrl, URLUtil.url(requestUrl).getPath()))
+                            .description(annotation == null ? "no desc" : annotation.value())
+                            .ip(request.getRemoteAddr())
+                            .parameter(null)
+                            .method(handlerMethod.getMethod().getName())
+                            .result("token expired !!! ")
                             .recodeTime(System.currentTimeMillis())
                             .spendTime(0L)
                             .uri(request.getRequestURI())
