@@ -9,7 +9,6 @@ import com.cherry.lucky.constant.ErrorCodeConstants;
 import com.cherry.lucky.constant.StringConstant;
 import com.cherry.lucky.domain.CherryResponseEntity;
 import com.cherry.lucky.domain.InterfaceLog;
-import com.cherry.lucky.model.dto.RedisUserInfo;
 import com.cherry.lucky.service.InterfaceLogService;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -94,17 +93,16 @@ public class InterfaceLogAspect {
         String requestUrl = request.getRequestURL().toString();
         // 用户信息
         String token = request.getHeader("token");
+        String username = "";
         if(StringUtils.isEmpty(token)) {
-            if(result instanceof CherryResponseEntity)  {
+            if(result instanceof CherryResponseEntity && ((CherryResponseEntity<?>) result).isSuccess())  {
                 token = ((CherryResponseEntity<String>) result).getData();
-            } else {
-                token = "";
+                username = userInfo.getUserInfoByRedis(token).getUsername();
             }
         }
-        RedisUserInfo user = userInfo.getUserInfoByRedis(token);
         InterfaceLog webLog = InterfaceLog
                 .builder()
-                .username(user.getUsername())
+                .username(username)
                 .basePath(StrUtil.removeSuffix(requestUrl, URLUtil.url(requestUrl).getPath()))
                 .description(annotation == null ? "no desc" : annotation.value())
                 .ip(request.getRemoteAddr())
