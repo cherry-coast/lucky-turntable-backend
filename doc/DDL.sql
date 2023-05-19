@@ -72,3 +72,19 @@ CREATE TABLE lucky_interface_log
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4 COMMENT ='接口日志表';
+
+
+drop table if exists lucky_back_user;
+CREATE TABLE `lucky_back_user`
+(
+    `ID`              BIGINT(11)   NOT NULL AUTO_INCREMENT,
+    `NAME`            VARCHAR(100) NOT NULL DEFAULT '' COMMENT '名字',
+    `PASSWORD`        VARCHAR(100) NOT NULL DEFAULT '' COMMENT '密码',
+    `LAST_LOGIN_TIME` TIMESTAMP             DEFAULT CURRENT_TIMESTAMP COMMENT '上次登录时间',
+    `INSERT_DATA`     TIMESTAMP             DEFAULT CURRENT_TIMESTAMP COMMENT '插入时间',
+    `UPDATE_DATA`     TIMESTAMP             DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `DEL`             BOOLEAN      NOT NULL DEFAULT FALSE COMMENT '是否删除,0:否,1:是,默认否',
+    PRIMARY KEY (`ID`)
+) ENGINE = INNODB
+  AUTO_INCREMENT = 1
+  DEFAULT CHARSET = utf8;
