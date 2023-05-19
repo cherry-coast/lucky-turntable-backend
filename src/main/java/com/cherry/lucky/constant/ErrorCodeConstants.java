@@ -52,4 +52,14 @@ public class ErrorCodeConstants {
      */
     public static final int REQUEST_FREQUENTLY = 50020;
 
+    /**
+     *用户已存在
+     */
+    public static final int USER_IS_EXIST = 50021;
+
+    /**
+     *用户不存在
+     */
+    public static final int USER_IS_NOT_EXIST = 50021;
+
 }
