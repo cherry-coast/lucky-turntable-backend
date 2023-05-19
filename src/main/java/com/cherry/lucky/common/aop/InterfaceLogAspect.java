@@ -3,6 +3,7 @@ package com.cherry.lucky.common.aop;
 import cn.hutool.core.date.StopWatch;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.URLUtil;
+import com.cherry.lucky.common.annotate.WebMonitorAnnotation;
 import com.cherry.lucky.common.auth.UserInfo;
 import com.cherry.lucky.common.exception.CherryException;
 import com.cherry.lucky.constant.ErrorCodeConstants;
@@ -114,7 +115,11 @@ public class InterfaceLogAspect {
                 .uri(request.getRequestURI())
                 .url(request.getRequestURL().toString())
                 .build();
-        interfaceLogServiceImpl.saveLog(webLog);
+        if (method.getAnnotation(WebMonitorAnnotation.class) != null) {
+            log.debug("monitor request !!! ");
+        } else {
+            interfaceLogServiceImpl.saveLog(webLog);
+        }
         return result;
     }
 
