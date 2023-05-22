@@ -23,6 +23,13 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
          registry.addInterceptor(new LoginInterceptor())
                  .addPathPatterns()
-                 .excludePathPatterns(UrlConstants.LOGIN_URL);
+                 .excludePathPatterns(
+                         UrlConstants.LOGIN_URL,
+                         UrlConstants.BACK_USER_LOGIN_URL,
+                         UrlConstants.BACK_USER_REGISTER_URL,
+                         UrlConstants.FAVICON_URL,
+                         UrlConstants.SWAGGER_URL,
+                         UrlConstants.API_URL
+                 );
     }
 }
