@@ -95,7 +95,7 @@ public class InterfaceLogAspect {
         // 用户信息
         String token = request.getHeader("token");
         String username = "";
-        if(StringUtils.isEmpty(token)) {
+        if(StringUtils.isEmpty(token) && method.getAnnotation(WebMonitorAnnotation.class) == null) {
             if(result instanceof CherryResponseEntity && ((CherryResponseEntity<?>) result).isSuccess())  {
                 token = ((CherryResponseEntity<String>) result).getData();
                 username = userInfo.getUserInfoByRedis(token).getUsername();
