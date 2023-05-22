@@ -2,7 +2,7 @@ package com.cherry.lucky.common.handle;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.URLUtil;
-import com.cherry.lucky.common.annotate.WxInterfaceAnnotation;
+import com.cherry.lucky.common.annotate.WebMonitorAnnotation;
 import com.cherry.lucky.constant.HttpCodeConstants;
 import com.cherry.lucky.domain.InterfaceLog;
 import com.cherry.lucky.service.impl.InterfaceLogServiceImpl;
@@ -45,7 +45,7 @@ public class LoginInterceptor implements HandlerInterceptor {
     ) {
         String requestUrl = request.getRequestURL().toString();
         if(handler instanceof HandlerMethod handlerMethod) {
-            if(handlerMethod.getMethodAnnotation(WxInterfaceAnnotation.class) != null) {
+            if(handlerMethod.getMethodAnnotation(WebMonitorAnnotation.class) == null) {
                 String token = request.getHeader("token");
                 ApiOperation annotation = handlerMethod.getMethodAnnotation(ApiOperation.class);
                 if(StringUtils.isEmpty(token)) {
