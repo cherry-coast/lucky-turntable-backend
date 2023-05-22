@@ -28,6 +28,9 @@
         <jaxb.version>2.3.1</jaxb.version>
         <mysql.version>8.0.30</mysql.version>
         <redisson.version>3.15.5</redisson.version>
+        <oshi-core.version>6.3.2</oshi-core.version>
+        <jna.version>5.12.1</jna.version>
+        <netty.version>4.1.70.Final</netty.version>
     </properties>
     <dependencies>
         <dependency>
@@ -169,6 +172,28 @@
                     <artifactId>springfox-boot-starter</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.oshi</groupId>
+            <artifactId>oshi-core</artifactId>
+            <version>${oshi-core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>${jna.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>${jna.version}</version>
         </dependency>
     </dependencies>
 
