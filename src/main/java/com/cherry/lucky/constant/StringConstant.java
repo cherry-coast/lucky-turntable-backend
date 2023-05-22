@@ -56,4 +56,25 @@ public class StringConstant {
     public static final String COMMA_FOR_ENGLISH = ",";
 
 
+    /**
+     * win 系统
+     */
+    public static final String WINDOWS_SYSTEM = "windows";
+
+    /**
+     * linux 系统
+     */
+    public static final String LINUX_SYSTEM = "linux";
+
+    /**
+     * 下行
+     */
+    public static final String RX_PACKETS = "RX packets";
+
+    /**
+     * 上行
+     */
+    public static final String TX_PACKETS = "TX packets";
+
+
 }
